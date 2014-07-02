@@ -35,11 +35,10 @@ class TopicList(ListView):
         last_updated = (data['object_list']
                             .annotate(updated=Max('questions__updated_on'))
                             .aggregate(Max('updated')))
-        
-        print self.request
-
+    
         data.update({'last_updated': last_updated['updated__max'],
                      'request': self.request,
+                     'breadcrumb': True,
                     })
         return data
 
@@ -60,6 +59,7 @@ class TopicDetail(DetailView):
             'questions': qs,
             'last_updated': qs.aggregate(updated=Max('updated_on'))['updated'],
             'request': self.request,
+            'breadcrumb': True,
         })
         return data
 
