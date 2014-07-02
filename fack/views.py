@@ -15,6 +15,7 @@ class TopicList(ListView):
     context_object_name = "topics"
 
     def get_context_data(self, **kwargs):
+
         data = super(TopicList, self).get_context_data(**kwargs)
         
         # This slightly magical queryset grabs the latest update date for 
@@ -35,7 +36,11 @@ class TopicList(ListView):
                             .annotate(updated=Max('questions__updated_on'))
                             .aggregate(Max('updated')))
         
-        data.update({'last_updated': last_updated['updated__max']})
+        print self.request
+
+        data.update({'last_updated': last_updated['updated__max'],
+                     'request': self.request,
+                    })
         return data
 
 class TopicDetail(DetailView):
@@ -54,6 +59,7 @@ class TopicDetail(DetailView):
         data.update({
             'questions': qs,
             'last_updated': qs.aggregate(updated=Max('updated_on'))['updated'],
+            'request': self.request,
         })
         return data
 
